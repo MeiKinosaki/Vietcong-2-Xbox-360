@@ -1,80 +1,84 @@
 # Vietcong 2 — Xbox 360
 
-Projeto experimental para investigar um port nativo de **Vietcong 2 (PC)** para Xbox 360. O repositório contém apenas um scaffold independente; não distribui executáveis nem recursos proprietários do jogo original.
+Projeto experimental para investigar a viabilidade de um port nativo de **Vietcong 2 (PC)** para Xbox 360. Este repositório contém scaffolding independente e documentação; não contém a engine original nem recursos proprietários do jogo.
 
-> **Versão de trabalho: v0.2b — scaffold de plataforma e CI de host.** O pipeline de host foi adicionado, mas ainda não foi executado/confirmado nesta sessão. Não há port jogável nem ELF/`default.xex` validado.
+> **Versão estável do plano: v0.2b.** A etapa seguinte (v0.3b) está em andamento: foram adicionadas interfaces iniciais de logging e uma lista de auditoria de portabilidade, ainda sem integração completa ou testes dedicados. Não há port jogável nem ELF/`default.xex` validado.
 
-## Implementado nesta etapa
+## Conteúdo presente
 
-- Interface C de plataforma em `src/platform/platform.h`.
-- Backend stub de host em `src/platform/platform_stub.c`.
-- Programa de demonstração em `src/main.c`.
-- Teste de interface em `tests/test_platform.c`.
-- `Makefile` com alvos `all`, `test` e `clean`.
-- GitHub Actions em `.github/workflows/host-ci.yml`, para compilar e testar o scaffold em Ubuntu.
+- `src/platform/platform.h`: interface inicial da plataforma.
+- `src/platform/platform_stub.c`: implementação stub para host.
+- `src/main.c`: programa mínimo de scaffold.
+- `tests/test_platform.c`: teste inicial da interface.
+- `Makefile`: alvos de build e teste de host.
+- `.github/workflows/host-ci.yml`: workflow de CI de host.
+- `src/platform/log.h` e `src/platform/log_stub.c`: interface e stub de logging, ainda não ligados ao build principal.
+- `docs/PORTABILITY_AUDIT.md`: checklist inicial de dependências a auditar.
 
-Esses arquivos verificam a estrutura básica do projeto; **não implementam a engine do Vietcong 2 nem APIs do Xbox 360**.
+## Build de host
 
-## Como testar no host
-
-Requer um compilador C compatível com C99 e GNU Make:
+Em um ambiente com compilador C99 e GNU Make:
 
 ```sh
 make
 make test
 ```
 
-O executável criado é um programa de scaffold para o sistema host, não um binário Xbox 360. O workflow do GitHub deve ser verificado na aba **Actions** depois de um push.
+Esse build, quando executado, produz apenas um programa de scaffold para o sistema host. Não produz executável Xbox 360. O workflow de CI precisa ser conferido na aba **Actions**; não há resultado verde confirmado nesta sessão.
 
-## Estado por subsistema
+## Estado dos subsistemas
 
 | Subsistema | Estado |
 |---|---|
-| Estrutura de plataforma independente | Interface inicial adicionada |
+| Interface de plataforma | Scaffold inicial presente |
 | Backend Xbox 360/Xenon | Não implementado |
-| Auditoria da engine original e dependências | Pendente |
+| Auditoria da engine/dependências | Checklist criado; auditoria real pendente |
+| Logging | Interface/stub criados; integração e teste pendentes |
 | Renderização / Direct3D | Não implementada |
 | Áudio | Não implementado |
-| Entrada / controle Xbox 360 | Não implementada |
+| Entrada / controle | Não implementada |
 | Arquivos e saves | Não implementados |
-| Build de host | Workflow configurado; resultado precisa ser confirmado no Actions |
+| CI de host | Configurado; resultado remoto não confirmado |
 | Toolchain Xenon | Não validada |
 | ELF para Xbox 360 | Não gerado |
 | `default.xex` | Não gerado |
-| Testes em console | Não realizados |
+| Teste em console | Não realizado |
 
 ## Roadmap sequencial
 
 ### v0.1b — Base documental
-- [x] Registrar objetivos, limites e critérios de evidência.
+- [x] Definir escopo, limites e critérios de evidência.
 
 ### v0.2b — Scaffold de plataforma
-- [x] Adicionar interface independente e stub de host.
-- [x] Adicionar executável mínimo e teste.
+- [x] Criar interface inicial e backend stub de host.
+- [x] Adicionar programa mínimo, teste e Makefile.
 - [x] Configurar CI de host.
-- [ ] Confirmar execução verde do workflow.
-- [ ] Confirmar toolchain Xenon disponível e documentar versões.
+- [ ] Confirmar workflow verde e registrar o resultado.
+- [ ] Verificar disponibilidade e versões da toolchain Xenon.
 
-### v0.3b — Abstrações de sistema
-- Separar logging, temporização, entrada e sistema de arquivos por interfaces.
-- Acrescentar testes unitários para as interfaces.
-- Criar um relatório de dependências e APIs a substituir, baseado apenas em fontes autorizadas.
+### v0.3b — Abstrações de sistema (em andamento)
+- [x] Criar interface inicial de logging e stub de host.
+- [x] Criar checklist de auditoria de portabilidade.
+- [ ] Integrar logging ao build e ao programa principal.
+- [ ] Adicionar testes para níveis de logging e mensagens nulas.
+- [ ] Definir interfaces de tempo, entrada e sistema de arquivos.
+- [ ] Documentar dependências reais após obter fontes autorizadas.
 
 ### v0.4b — Prova de conceito gráfica
 - Definir interface mínima de renderização.
-- Criar teste gráfico independente, sem recursos do jogo.
+- Criar teste gráfico independente, sem recursos proprietários.
 - Documentar limitações de GPU e memória.
 
 ### v0.5b — Pipeline de artefatos
 - Automatizar build ELF quando a toolchain compatível estiver disponível.
 - Investigar conversão para XEX.
-- Só declarar `default.xex` funcional após validação e teste no ambiente-alvo.
+- Validar a inicialização no ambiente-alvo antes de declarar o artefato funcional.
 
-As versões avançam **uma por vez, sem pular números**. Uma tarefa só será marcada como concluída quando houver código, teste, log ou artefato verificável. Não serão inventados percentuais de implementação.
+As versões serão avançadas uma por vez, sem pular números. Só será considerada concluída uma tarefa com código, teste, log ou artefato verificável. Percentuais não serão apresentados como fatos sem critérios e evidências.
 
 ## Direitos e recursos
 
-Não adicione ao repositório cópias do jogo, executáveis comerciais, mapas, modelos, texturas, áudio ou outros recursos proprietários sem autorização. Use somente fontes, ferramentas e materiais que você tenha direito de utilizar. A licença deste repositório não concede direitos sobre Vietcong 2 ou componentes de terceiros.
+Não adicione cópias do jogo, executáveis comerciais, mapas, modelos, texturas, áudio ou outros recursos proprietários sem autorização. A licença deste repositório não concede direitos sobre Vietcong 2 ou componentes de terceiros.
 
 ## Critérios de progresso real
 
@@ -86,6 +90,7 @@ Não adicione ao repositório cópias do jogo, executáveis comerciais, mapas, m
 
 ## Registro
 
-- **Versão de trabalho:** v0.2b
+- **Versão estável:** v0.2b
+- **Próxima versão em andamento:** v0.3b
 - **Branch:** `main`
 - **Estado:** scaffold inicial; port ainda não funcional
