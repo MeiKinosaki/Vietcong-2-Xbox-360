@@ -1,88 +1,91 @@
 # Vietcong 2 — Xbox 360
 
-Projeto experimental para pesquisar a viabilidade de um port nativo de **Vietcong 2 (PC)** para Xbox 360. O objetivo inicial é estabelecer uma base de engenharia independente e verificável, sem incluir executáveis, recursos proprietários ou arquivos extraídos do jogo original.
+Projeto experimental para investigar um port nativo de **Vietcong 2 (PC)** para Xbox 360. O repositório contém apenas um scaffold independente; não distribui executáveis nem recursos proprietários do jogo original.
 
-> **Estado atual: v0.1b — planejamento e scaffold inicial.** Ainda não há port jogável, engine original integrada, ELF ou `default.xex` validado. Nenhuma compilação foi confirmada neste repositório.
+> **Versão de trabalho: v0.2b — scaffold de plataforma e CI de host.** O pipeline de host foi adicionado, mas ainda não foi executado/confirmado nesta sessão. Não há port jogável nem ELF/`default.xex` validado.
 
-## Objetivos
+## Implementado nesta etapa
 
-- Investigar dependências da versão para Windows e definir uma estratégia de portabilidade.
-- Criar uma camada de plataforma isolada para o Xbox 360 (CPU Xenon / PowerPC).
-- Planejar substituições para APIs gráficas, áudio, entrada, arquivos e temporização do Windows.
-- Preparar uma compilação reproduzível, inicialmente mirando ELF e posteriormente XEX.
-- Manter progresso incremental, testes e evidências por versão.
+- Interface C de plataforma em `src/platform/platform.h`.
+- Backend stub de host em `src/platform/platform_stub.c`.
+- Programa de demonstração em `src/main.c`.
+- Teste de interface em `tests/test_platform.c`.
+- `Makefile` com alvos `all`, `test` e `clean`.
+- GitHub Actions em `.github/workflows/host-ci.yml`, para compilar e testar o scaffold em Ubuntu.
+
+Esses arquivos verificam a estrutura básica do projeto; **não implementam a engine do Vietcong 2 nem APIs do Xbox 360**.
+
+## Como testar no host
+
+Requer um compilador C compatível com C99 e GNU Make:
+
+```sh
+make
+make test
+```
+
+O executável criado é um programa de scaffold para o sistema host, não um binário Xbox 360. O workflow do GitHub deve ser verificado na aba **Actions** depois de um push.
 
 ## Estado por subsistema
 
-| Subsistema | Estado | Próxima tarefa |
-|---|---|---|
-| Auditoria de código e dependências | Não iniciada | Inventariar apenas fontes e dependências autorizadas |
-| Camada de plataforma | Planejada | Definir interfaces independentes da plataforma |
-| Renderização / Direct3D | Não implementada | Mapear requisitos e desenhar backend compatível |
-| Áudio | Não implementado | Identificar API e definir abstração |
-| Entrada / controle | Não implementada | Definir mapeamento para controle Xbox 360 |
-| Sistema de arquivos / saves | Não implementado | Definir caminhos e formato de dados próprios |
-| Toolchain Xenon | Não validada | Confirmar compilador, linker e SDK disponíveis |
-| ELF | Não gerado | Criar alvo mínimo depois de validar a toolchain |
-| `default.xex` | Não gerado | Só declarar concluído após conversão e teste verificáveis |
-| Testes em console | Não realizados | Registrar hardware, build e resultado de cada teste |
+| Subsistema | Estado |
+|---|---|
+| Estrutura de plataforma independente | Interface inicial adicionada |
+| Backend Xbox 360/Xenon | Não implementado |
+| Auditoria da engine original e dependências | Pendente |
+| Renderização / Direct3D | Não implementada |
+| Áudio | Não implementado |
+| Entrada / controle Xbox 360 | Não implementada |
+| Arquivos e saves | Não implementados |
+| Build de host | Workflow configurado; resultado precisa ser confirmado no Actions |
+| Toolchain Xenon | Não validada |
+| ELF para Xbox 360 | Não gerado |
+| `default.xex` | Não gerado |
+| Testes em console | Não realizados |
 
 ## Roadmap sequencial
 
-### v0.1b — Base e levantamento
+### v0.1b — Base documental
+- [x] Registrar objetivos, limites e critérios de evidência.
 
-- [x] Criar registro inicial do projeto e critérios de progresso.
-- [x] Registrar que o repositório ainda não contém um port funcional.
-- [ ] Inventariar os arquivos e dependências que podem ser legalmente usados.
-- [ ] Definir a arquitetura da camada de plataforma.
-- [ ] Adicionar um scaffold mínimo de código e testes.
-- [ ] Preparar CI sem afirmar suporte ao Xbox 360 até que a toolchain seja validada.
-
-### v0.2b — Scaffold compilável
-
-- Estrutura de diretórios e interfaces de plataforma.
-- Programa mínimo sem dependência de conteúdo proprietário.
-- Testes básicos executáveis no host de desenvolvimento.
-- Primeira tentativa documentada de compilação Xenon, se a toolchain estiver disponível.
+### v0.2b — Scaffold de plataforma
+- [x] Adicionar interface independente e stub de host.
+- [x] Adicionar executável mínimo e teste.
+- [x] Configurar CI de host.
+- [ ] Confirmar execução verde do workflow.
+- [ ] Confirmar toolchain Xenon disponível e documentar versões.
 
 ### v0.3b — Abstrações de sistema
-
-- Entrada, temporização, arquivos e logging separados da lógica principal.
-- Testes de unidade e verificação de compilação.
-- Relatório das APIs que ainda impedem a portabilidade.
+- Separar logging, temporização, entrada e sistema de arquivos por interfaces.
+- Acrescentar testes unitários para as interfaces.
+- Criar um relatório de dependências e APIs a substituir, baseado apenas em fontes autorizadas.
 
 ### v0.4b — Prova de conceito gráfica
-
-- Definir uma pequena interface de renderização.
-- Validar um teste gráfico independente, sem recursos do jogo.
+- Definir interface mínima de renderização.
+- Criar teste gráfico independente, sem recursos do jogo.
 - Documentar limitações de GPU e memória.
 
 ### v0.5b — Pipeline de artefatos
+- Automatizar build ELF quando a toolchain compatível estiver disponível.
+- Investigar conversão para XEX.
+- Só declarar `default.xex` funcional após validação e teste no ambiente-alvo.
 
-- Automatizar build ELF quando a toolchain estiver disponível.
-- Investigar conversão para XEX e validar o resultado com ferramentas compatíveis.
-- Testar inicialização no ambiente-alvo antes de declarar um artefato funcional.
+As versões avançam **uma por vez, sem pular números**. Uma tarefa só será marcada como concluída quando houver código, teste, log ou artefato verificável. Não serão inventados percentuais de implementação.
 
-As versões serão avançadas **uma por vez**. Uma etapa só será marcada como concluída quando houver código, teste ou artefato verificável. Percentuais de implementação não serão estimados como fatos sem critérios e evidências.
+## Direitos e recursos
 
-## Compilação
+Não adicione ao repositório cópias do jogo, executáveis comerciais, mapas, modelos, texturas, áudio ou outros recursos proprietários sem autorização. Use somente fontes, ferramentas e materiais que você tenha direito de utilizar. A licença deste repositório não concede direitos sobre Vietcong 2 ou componentes de terceiros.
 
-A compilação para Xbox 360 depende de uma toolchain compatível com Xenon/PowerPC e de ferramentas capazes de produzir um executável aceito pelo console. A configuração exata ainda precisa ser confirmada. Até lá, não se deve presumir que um build genérico para Linux ou Windows produza um XEX funcional.
+## Critérios de progresso real
 
-## Conteúdo e direitos
-
-Este repositório não deve distribuir o jogo original, executáveis comerciais, mapas, modelos, texturas, áudio ou outros recursos proprietários. Use apenas código, ferramentas e materiais para os quais você tenha autorização. A licença deste repositório não concede direitos sobre Vietcong 2 nem sobre seus componentes de terceiros.
-
-## Critérios para declarar progresso real
-
-1. Código-fonte presente no repositório.
-2. Compilação com logs ou workflow reproduzível.
-3. Testes passando, com resultados registrados.
-4. Para ELF/XEX: artefato gerado e validação identificável.
-5. Para execução no Xbox 360: teste real documentado, sem confundir sucesso de compilação com jogabilidade.
+1. Código presente no repositório.
+2. Compilação reproduzível com logs.
+3. Testes com resultados registrados.
+4. ELF/XEX gerado e validado com ferramentas compatíveis.
+5. Execução no Xbox 360 documentada separadamente da compilação.
 
 ## Registro
 
-- **Versão de planejamento:** v0.1b
-- **Branch principal:** `main`
-- **Estado:** scaffold documental; port ainda não funcional
+- **Versão de trabalho:** v0.2b
+- **Branch:** `main`
+- **Estado:** scaffold inicial; port ainda não funcional
